@@ -70,6 +70,9 @@
     .sidebar { display: none; }
     .main-content { margin-left: 0; padding: 16px 16px calc(var(--nav-height) + 16px); }
     .mobile-nav { display: block; }
+    .upload-area { padding: 28px 16px; }
+    .upload-area i { font-size: 36px; }
+    .questions-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   }
 
   /* ── SCREENS ────────────────────────────────── */
@@ -91,6 +94,32 @@
   .form-select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); outline: none; cursor: pointer; }
   .form-select:focus { border-color: var(--primary); }
   .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+  /* ── INFO POPUP ── */
+  .info-trigger-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .info-trigger-row .form-label { margin-bottom: 0; }
+  .info-btn { width: 18px; height: 18px; border-radius: 50%; background: var(--primary-light); border: 1px solid #BFDBFE; color: var(--primary); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all .15s; font-family: inherit; padding: 0; }
+  .info-btn:hover { background: var(--primary); color: #fff; }
+  .info-popup-wrap { position: relative; display: inline-flex; }
+  .info-popup { position: absolute; left: 26px; top: -8px; width: 300px; background: #1E293B; color: #E2E8F0; border-radius: var(--radius); padding: 14px 16px; font-size: 12px; line-height: 1.65; z-index: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.25); pointer-events: none; opacity: 0; transform: translateX(4px); transition: opacity .18s, transform .18s; }
+  .info-popup.above { top: auto; bottom: -8px; }
+  .info-popup::before { content: ''; position: absolute; left: -6px; top: 14px; border: 6px solid transparent; border-right-color: #1E293B; border-left: none; }
+  .info-popup.above::before { top: auto; bottom: 14px; }
+  .info-popup-wrap:hover .info-popup,
+  .info-popup-wrap.active .info-popup { opacity: 1; transform: translateX(0); pointer-events: auto; }
+  /* Mobilde sağa değil alta aç */
+  @media (max-width: 520px) {
+    .info-popup { left: 0; top: 28px; width: 260px; }
+    .info-popup::before { left: 8px; top: -10px; border: 6px solid transparent; border-bottom-color: #1E293B; border-top: none; }
+  }
+  .info-popup strong { color: #F8FAFC; font-weight: 600; }
+  .info-popup ol { padding-left: 16px; margin: 6px 0 0; }
+  .info-popup ol li { margin-bottom: 5px; }
+  .info-popup a { color: #93C5FD; text-decoration: none; }
+  .info-popup a:hover { text-decoration: underline; }
+  .info-popup .copy-uri { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 3px 8px; font-size: 10.5px; cursor: pointer; color: #93C5FD; font-family: monospace; word-break: break-all; }
+  .info-popup .copy-uri:hover { background: rgba(255,255,255,0.14); }
+  .info-popup hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0; }
   .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
   
   /* ── BUTTONS ────────────────────────────────── */
@@ -156,12 +185,13 @@
   .empty-state p { font-size: 13px; }
 
   /* ── UPLOAD SCREEN ────────────────────────────────── */
-  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 60px 30px; text-align: center; cursor: pointer; transition: all .2s; }
+  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 48px 30px 40px; text-align: center; transition: all .2s; cursor: pointer; }
   .upload-area:hover, .upload-area.drag-over { border-color: var(--primary); background: var(--primary-light); }
-  .upload-area i { font-size: 48px; color: var(--text-light); margin-bottom: 12px; display: block; }
-  .upload-area.drag-over i { color: var(--primary); }
+  .upload-area i { font-size: 52px; color: var(--text-light); margin-bottom: 14px; display: block; transition: color .2s; }
+  .upload-area:hover i, .upload-area.drag-over i { color: var(--primary); }
   .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
   .upload-sub { font-size: 13px; color: var(--text-muted); }
+  .upload-btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; padding: 20px 0 4px; }
   .upload-progress { display: none; }
   .progress-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
   .progress-step { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); }
@@ -176,8 +206,34 @@
   .preview-img { max-width: 100%; max-height: 200px; border-radius: var(--radius); margin-top: 16px; border: 1px solid var(--border); }
 
   /* ── ARCHIVE SCREEN ────────────────────────────────── */
-  .archive-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
-  @media (max-width: 768px) { .archive-layout { grid-template-columns: 1fr; } }
+  .archive-layout { display: grid; grid-template-columns: 270px 1fr; gap: 20px; }
+  @media (max-width: 768px) {
+    .archive-layout { grid-template-columns: 1fr; gap: 0; }
+    /* Mobil: tree accordion olarak kapanıp açılır */
+    .folder-tree { position: static; border-radius: 0; border-left: none; border-right: none; border-top: none; padding: 0; }
+    .tree-mobile-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+      color: var(--text); background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .tree-mobile-toggle i { font-size: 16px; color: var(--text-muted); transition: transform .2s; }
+    .tree-mobile-toggle.open i.toggle-arrow { transform: rotate(180deg); }
+    .tree-mobile-body { display: none; padding: 10px 12px; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .tree-mobile-body.open { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tree-item { padding: 5px 11px; font-size: 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); display: inline-flex; }
+    .tree-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tree-item.active .tree-count { background: rgba(255,255,255,0.2); border-color: transparent; color: #fff; }
+    .tree-children { display: contents; padding-left: 0; }
+    .detail-actions { flex-direction: column; align-items: stretch; }
+    .detail-actions .action-spacer { display: none; }
+    .detail-actions .counters { justify-content: center; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .summary-cards { grid-template-columns: 1fr 1fr; }
+  }
+  @media (min-width: 769px) {
+    .tree-mobile-toggle { display: none; }
+    .tree-mobile-body { display: contents !important; }
+  }
   .folder-tree { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; height: fit-content; position: sticky; top: 20px; }
   .tree-item { padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); transition: all .15s; }
   .tree-item:hover { background: var(--bg); color: var(--text); }
@@ -238,21 +294,104 @@
   .counter-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
   .btn-learned.active { background: var(--green); color: #fff; }
 
-  /* ── CHAT PANEL ────────────────────────────────── */
-  .chat-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; display: none; }
-  .chat-panel { position: fixed; bottom: 0; left: 0; right: 0; height: 70vh; background: var(--surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-md); z-index: 201; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .3s cubic-bezier(0.4,0,0.2,1); }
-  .chat-panel.open { transform: translateY(0); }
-  .chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .chat-header h3 { font-size: 14px; font-weight: 600; flex: 1; }
-  .chat-summary { padding: 12px 20px; background: var(--primary-light); border-bottom: 1px solid var(--border); font-size: 12px; color: #1E40AF; }
-  .chat-messages { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
-  .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
-  .chat-bubble.user { background: var(--primary); color: #fff; align-self: flex-end; border-radius: 14px 14px 3px 14px; }
-  .chat-bubble.ai { background: var(--bg); border: 1px solid var(--border); align-self: flex-start; border-radius: 14px 14px 14px 3px; }
-  .chat-bubble.thinking { color: var(--text-muted); font-style: italic; }
-  .chat-input-row { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-  .chat-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none; resize: none; height: 42px; }
-  .chat-input:focus { border-color: var(--primary); }
+  /* ── FLOATING CHATBOT ──────────────────────────── */
+  /* FAB */
+  .chat-fab {
+    position: fixed; bottom: 28px; right: 24px; z-index: 210;
+    display: none; flex-direction: row-reverse; align-items: center; gap: 10px;
+  }
+  .chat-fab.pos-left { right: auto; left: calc(var(--sidebar-w, 260px) + 16px); flex-direction: row; }
+  .chat-fab-btn {
+    width: 52px; height: 52px; background: var(--primary); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.35); cursor: pointer; border: none;
+    transition: transform .18s, box-shadow .18s; flex-shrink: 0;
+  }
+  .chat-fab-btn:hover { transform: scale(1.07); box-shadow: 0 6px 20px rgba(37,99,235,0.45); }
+  .chat-fab-btn i { font-size: 24px; color: #fff; }
+  .chat-fab-label {
+    font-size: 12px; font-weight: 600; color: var(--primary);
+    background: var(--primary-light); border: 1px solid #BFDBFE;
+    border-radius: 20px; padding: 4px 12px; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+  }
+  /* Chatbot panel */
+  .chatbot-panel {
+    position: fixed; bottom: 92px; right: 24px;
+    width: 430px; max-width: calc(100vw - 32px);
+    height: 570px; max-height: calc(100vh - 130px);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+    z-index: 209; display: flex; flex-direction: column; overflow: hidden;
+    opacity: 0; pointer-events: none;
+    transform: translateY(14px) scale(0.97);
+    transition: opacity .2s, transform .2s;
+    transform-origin: bottom right;
+  }
+  .chatbot-panel.pos-left {
+    right: auto; left: calc(var(--sidebar-w, 260px) + 16px);
+    transform-origin: bottom left;
+  }
+  .chatbot-panel.open { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+  .chatbot-header {
+    padding: 13px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .chatbot-header-icon {
+    width: 34px; height: 34px; background: var(--primary-light); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .chatbot-header-icon i { font-size: 17px; color: var(--primary); }
+  .chatbot-header-info { flex: 1; min-width: 0; }
+  .chatbot-header-info strong { font-size: 13px; font-weight: 600; display: block; }
+  .chatbot-header-info span { font-size: 11px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chatbot-header-btns { display: flex; gap: 2px; }
+  .chatbot-header-btns button {
+    width: 30px; height: 30px; border-radius: var(--radius-sm); border: none; background: none;
+    color: var(--text-muted); cursor: pointer; font-size: 15px;
+    display: flex; align-items: center; justify-content: center; transition: background .12s;
+  }
+  .chatbot-header-btns button:hover { background: var(--bg); color: var(--text); }
+  .chatbot-context-bar {
+    padding: 9px 16px; background: var(--primary-light); border-bottom: 1px solid #BFDBFE;
+    font-size: 12px; color: #1E40AF; line-height: 1.5; flex-shrink: 0;
+  }
+  .chatbot-messages {
+    flex: 1; overflow-y: auto; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .chatbot-bubble {
+    max-width: 86%; padding: 9px 13px; font-size: 13px; line-height: 1.6;
+    border-radius: 14px; word-break: break-word;
+  }
+  .chatbot-bubble.user { background: var(--primary); color: #fff; align-self: flex-end; border-radius: 14px 14px 3px 14px; }
+  .chatbot-bubble.ai { background: var(--bg); border: 1px solid var(--border); align-self: flex-start; border-radius: 14px 14px 14px 3px; }
+  .chatbot-bubble.thinking { color: var(--text-muted); font-style: italic; }
+  .chatbot-input-row {
+    padding: 10px 14px; border-top: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .chatbot-input {
+    flex: 1; padding: 9px 12px; border: 1px solid var(--border);
+    border-radius: 14px; font-size: 13px; font-family: inherit; outline: none;
+    resize: none; max-height: 90px; min-height: 38px; background: var(--bg);
+    transition: border-color .15s; line-height: 1.5;
+  }
+  .chatbot-input:focus { border-color: var(--primary); }
+  .chatbot-send {
+    width: 36px; height: 36px; flex-shrink: 0; background: var(--primary);
+    border: none; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: background .12s;
+  }
+  .chatbot-send:hover { background: #1D4ED8; }
+  .chatbot-send i { font-size: 16px; color: #fff; }
+  @media (max-width: 768px) {
+    .chat-fab { bottom: calc(64px + 14px); right: 14px; }
+    .chat-fab.pos-left { left: 14px; }
+    .chatbot-panel { bottom: calc(64px + 72px); right: 14px; width: calc(100vw - 28px); height: 52vh; }
+    .chatbot-panel.pos-left { left: 14px; right: auto; }
+  }
 
   /* ── LIGHTBOX ────────────────────────────────── */
   .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 300; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
@@ -294,6 +433,13 @@
   .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--bg) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
+  /* ── MODAL ────────────────────────────────── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 400; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 24px; max-width: 420px; width: 100%; animation: slideIn .2s ease; }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
   /* ── SVG container ── */
   .svg-container { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); overflow: auto; }
   .svg-container svg { max-width: 100%; }
@@ -314,19 +460,80 @@
   <img id="lightboxImg" src="" alt="">
 </div>
 
-<!-- CHAT PANEL -->
-<div class="chat-overlay" id="chatOverlay" onclick="closeChat()"></div>
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-header">
-    <i class="ti ti-message-circle" style="color: var(--primary); font-size: 18px;"></i>
-    <h3>Soru Sor</h3>
-    <button class="btn btn-ghost btn-icon" onclick="closeChat()"><i class="ti ti-x"></i></button>
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal-box">
+    <div class="modal-title"><i class="ti ti-edit" style="color:var(--primary);"></i> Ders / Konu Düzenle</div>
+    <div class="form-group">
+      <label class="form-label">Ders</label>
+      <input type="text" class="form-input" id="editDers" placeholder="Matematik">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Konu</label>
+      <input type="text" class="form-input" id="editKonu" placeholder="Türev">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Zorluk</label>
+      <select class="form-select" id="editZorluk">
+        <option value="Kolay">Kolay</option>
+        <option value="Orta">Orta</option>
+        <option value="Zor">Zor</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeEditModal()">İptal</button>
+      <button class="btn btn-primary" onclick="saveEditModal()"><i class="ti ti-check"></i> Kaydet</button>
+    </div>
   </div>
-  <div class="chat-summary" id="chatSummary"></div>
-  <div class="chat-messages" id="chatMessages"></div>
-  <div class="chat-input-row">
-    <textarea class="chat-input" id="chatInput" placeholder="Aklında takılan bir şey mi var?" onkeydown="chatKeydown(event)"></textarea>
-    <button class="btn btn-primary" onclick="sendChatMessage()"><i class="ti ti-send"></i></button>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal-box">
+    <div class="modal-title" style="color:var(--red);"><i class="ti ti-trash"></i> Soruyu Sil</div>
+    <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">Bu soruyu kalıcı olarak silmek istediğine emin misin? Drive'daki görsel ve JSON dosyası da silinecek. Bu işlem geri alınamaz.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Vazgeç</button>
+      <button class="btn" style="background:var(--red);color:#fff;" onclick="confirmDelete()"><i class="ti ti-trash"></i> Evet, Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT PANEL -->
+<!-- FLOATING CHATBOT FAB -->
+<div class="chat-fab" id="chatFab">
+  <div class="chat-fab-label" id="chatFabLabel">Soru Sor</div>
+  <button class="chat-fab-btn" id="chatFabBtn" onclick="toggleChatbot()" aria-label="Asistan">
+    <i class="ti ti-message-circle"></i>
+  </button>
+</div>
+
+<!-- FLOATING CHATBOT PANEL -->
+<div class="chatbot-panel" id="chatbotPanel">
+  <div class="chatbot-header">
+    <div class="chatbot-header-icon" id="chatbotHeaderIcon">
+      <i class="ti ti-message-circle"></i>
+    </div>
+    <div class="chatbot-header-info">
+      <strong id="chatbotHeaderTitle">Asistan</strong>
+      <span id="chatbotHeaderSub"></span>
+    </div>
+    <div class="chatbot-header-btns">
+      <button onclick="switchChatSide()" title="Sol/Sağ değiştir"><i class="ti ti-arrows-left-right"></i></button>
+      <button onclick="clearChatbot()" title="Sohbeti temizle"><i class="ti ti-trash"></i></button>
+      <button onclick="closeChatbot()" title="Kapat"><i class="ti ti-x"></i></button>
+    </div>
+  </div>
+  <div class="chatbot-context-bar" id="chatbotContextBar" style="display:none;"></div>
+  <div class="chatbot-messages" id="chatbotMessages"></div>
+  <div class="chatbot-input-row">
+    <textarea class="chatbot-input" id="chatbotInput"
+      placeholder="Yaz..." rows="1"
+      onkeydown="chatbotKeydown(event)"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"></textarea>
+    <button class="chatbot-send" onclick="sendChatbotMessage()">
+      <i class="ti ti-send"></i>
+    </button>
   </div>
 </div>
 
@@ -350,29 +557,100 @@
       <!-- Step 1: API keys -->
       <div id="setup-step-keys">
         <div class="step-label">1. Kurulum — API Ayarları</div>
+        <div id="setup-keys-error" style="display:none; background: var(--red-light); border:1px solid #FCA5A5; color: var(--red); border-radius: var(--radius-sm); padding: 10px 12px; font-size:12px; margin-bottom:14px; line-height:1.5;"></div>
+
+        <!-- Google Client ID -->
         <div class="form-group">
-          <label class="form-label">Google Client ID</label>
+          <div class="info-trigger-row">
+            <label class="form-label">Google Client ID</label>
+            <div class="info-popup-wrap" onclick="this.classList.toggle('active')">
+              <button type="button" class="info-btn">?</button>
+              <div class="info-popup">
+                <strong>Google Client ID nedir?</strong><br>
+                Uygulamanın Google hesabına erişmesi için gerekli tanımlayıcı.<hr>
+                <ol>
+                  <li><a href="https://console.cloud.google.com" target="_blank" rel="noopener">console.cloud.google.com</a> adresine git</li>
+                  <li>Soldaki menüden <strong>APIs &amp; Services → Credentials</strong> seç</li>
+                  <li>Üstte <strong>+ CREATE CREDENTIALS → OAuth client ID</strong> tıkla</li>
+                  <li>İlk kez yapıyorsan <strong>Configure Consent Screen</strong> çıkar:<br>
+                    → User Type: <strong>External</strong> → Create<br>
+                    → App name, e-posta gir → kaydet, geri kalanı atla
+                  </li>
+                  <li>Application type: <strong>Web application</strong> seç</li>
+                  <li><strong>Authorized redirect URIs</strong> alanına şu adresi ekle:<br>
+                    <span class="copy-uri" onclick="event.stopPropagation(); copyRedirectUri(this)"><i class="ti ti-copy"></i> <span id="redirectUriHint"></span></span>
+                  </li>
+                  <li><strong>CREATE</strong> tıkla — açılan penceredeki <strong>Client ID</strong> değerini kopyala</li>
+                </ol>
+              </div>
+            </div>
+          </div>
           <input type="text" class="form-input" id="setupClientId" placeholder="xxxx.apps.googleusercontent.com">
-          <div class="form-hint">Google Cloud Console → OAuth 2.0 İstemci Kimliği</div>
         </div>
+
+        <!-- Google Client Secret -->
         <div class="form-group">
-          <label class="form-label">Gemini API Key</label>
-          <input type="password" class="form-input" id="setupGeminiKey" placeholder="AIza...">
-          <div class="form-hint">Google AI Studio üzerinden ücretsiz alabilirsiniz</div>
+          <div class="info-trigger-row">
+            <label class="form-label">Google Client Secret</label>
+            <div class="info-popup-wrap" onclick="this.classList.toggle('active')">
+              <button type="button" class="info-btn">?</button>
+              <div class="info-popup">
+                <strong>Google Client Secret nedir?</strong><br>
+                Client ID ile birlikte gelen gizli anahtar; Google'ın OAuth akışında token alışverişi için zorunlu.<hr>
+                <ol>
+                  <li>Yukarıdaki adımlarla aynı sayfada (<strong>Credentials</strong>) Client ID'ni oluşturduktan sonra açılan popup'ta hem ID hem de <strong>Client secret</strong> görünür</li>
+                  <li>Popup'ı kapattıysan: listedeki Client ID'ye tıkla → <strong>"Client secret"</strong> alanını bul → gözün simgesine basarak göster ve kopyala</li>
+                </ol>
+                <hr>
+                <strong style="color:#FCA5A5;">🔒 Güvenlik notu:</strong> Bu değer yalnızca tarayıcının yerel deposunda (<code>localStorage</code>) saklanır. Hiçbir sunucuya gönderilmez.
+              </div>
+            </div>
+          </div>
+          <input type="password" class="form-input" id="setupClientSecret" placeholder="GOCSPX-...">
         </div>
+
+        <!-- Gemini API Key -->
+        <div class="form-group">
+          <div class="info-trigger-row">
+            <label class="form-label">Gemini API Key</label>
+            <div class="info-popup-wrap" onclick="this.classList.toggle('active')">
+              <button type="button" class="info-btn">?</button>
+              <div class="info-popup above">
+                <strong>Gemini API Key nedir?</strong><br>
+                Yapay zeka analizleri için gerekli; ücretsiz kullanım limiti günlük 1500 istek.<hr>
+                <ol>
+                  <li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> adresine git</li>
+                  <li><strong>Get API Key → Create API key</strong> tıkla</li>
+                  <li>Yeni proje seç ya da mevcut projeyi kullan</li>
+                  <li>Oluşan <strong>AIza...</strong> ile başlayan anahtarı kopyala</li>
+                </ol>
+                <hr>
+                <strong>💡 Ücretsiz mi?</strong> Evet. Kart bilgisi girmeden, günde 1500 istek sınırıyla ücretsiz kullanılabilir. Sınav çalışması için bu limit fazlasıyla yeterli.
+              </div>
+            </div>
+          </div>
+          <input type="password" class="form-input" id="setupGeminiKey" placeholder="AIza...">
+        </div>
+
         <button class="btn btn-primary btn-full" onclick="saveSetup()">
           <i class="ti ti-check"></i> Devam Et
         </button>
-        <p style="font-size:11px; color: var(--text-muted); text-align:center; margin-top:12px;">Anahtarlar yalnızca tarayıcınızda saklanır, hiçbir sunucuya gönderilmez.</p>
+        <p style="font-size:11px; color: var(--text-muted); text-align:center; margin-top:12px;">
+          <i class="ti ti-lock" style="font-size:12px;"></i> Tüm anahtarlar yalnızca tarayıcında saklanır, hiçbir sunucuya gönderilmez.
+        </p>
       </div>
 
       <!-- Step 2: OAuth + Profile -->
       <div id="setup-step-auth" style="display:none;">
         <div class="step-label">2. Google Hesabı</div>
+        <div id="setup-auth-error" style="display:none; background: var(--red-light); border:1px solid #FCA5A5; color: var(--red); border-radius: var(--radius-sm); padding: 10px 12px; font-size:12px; margin-bottom:16px; line-height:1.5;"></div>
         <p style="font-size:13px; color: var(--text-muted); margin-bottom:16px;">Drive'a erişmek için Google hesabınızla giriş yapın.</p>
         <button class="btn google-btn btn-full btn-lg" onclick="startOAuth()">
           <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Google ile Giriş Yap
+        </button>
+        <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="backToKeysStep()">
+          <i class="ti ti-arrow-left"></i> API Ayarlarına Geri Dön
         </button>
       </div>
 
@@ -481,12 +759,25 @@
           <div class="page-sub">Soru görselini yükle, yapay zeka analiz etsin</div>
         </div>
         <div class="card">
-          <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <!-- Drag & drop alanı — butonlardan ayrı -->
+          <div class="upload-area" id="uploadArea" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
             <i class="ti ti-photo-up"></i>
             <div class="upload-title">Görseli Buraya Sürükle</div>
-            <div class="upload-sub">ya da tıkla • PNG, JPG, JPEG, WEBP</div>
+            <div class="upload-sub">PNG, JPG, WEBP • veya aşağıdaki butonları kullan</div>
           </div>
-          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="handleFileSelect(event)">
+          <!-- Butonlar — alanın dışında, altında -->
+          <div class="upload-btn-row" id="uploadBtnRow">
+            <button class="btn btn-primary btn-lg" onclick="document.getElementById('fileInput').click()">
+              <i class="ti ti-folder-open"></i> Dosyadan Seç
+            </button>
+            <button class="btn btn-secondary btn-lg camera-btn" onclick="document.getElementById('cameraInput').click()" style="display:none;">
+              <i class="ti ti-camera"></i> Fotoğraf Çek
+            </button>
+          </div>
+          <!-- Galeri seçimi (tüm cihazlar) -->
+          <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)">
+          <!-- Kamera (sadece mobil) -->
+          <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event)">
           <img id="uploadPreview" class="preview-img" style="display:none">
           <div class="upload-progress" id="uploadProgress">
             <div class="progress-steps">
@@ -517,10 +808,16 @@
         </div>
         <div class="archive-layout">
           <div class="folder-tree" id="folderTree">
-            <div class="tree-item active" onclick="filterArchive(null, null)" id="treeAll">
-              <i class="ti ti-folders"></i> Tümü <span class="tree-count" id="treeAllCount">0</span>
+            <div class="tree-mobile-toggle" id="treeMobileToggle" onclick="toggleMobileTree()">
+              <span><i class="ti ti-folders" style="margin-right:6px;"></i><span id="treeMobileLabel">Dersler & Konular</span></span>
+              <i class="ti ti-chevron-down toggle-arrow"></i>
             </div>
-            <div id="treeDersList"></div>
+            <div class="tree-mobile-body" id="treeMobileBody">
+              <div class="tree-item active" onclick="filterArchive(null, null)" id="treeAll">
+                <i class="ti ti-folders"></i> Tümü <span class="tree-count" id="treeAllCount">0</span>
+              </div>
+              <div id="treeDersList"></div>
+            </div>
           </div>
           <div>
             <div class="archive-stats" id="archiveStats">0 soru — 0 öğrenildi — 0 devam ediyor</div>
@@ -598,6 +895,35 @@
             <button class="btn btn-secondary" onclick="logout()" style="margin-left:auto; color: var(--red);"><i class="ti ti-logout"></i> Çıkış Yap</button>
           </div>
         </div>
+
+        <div class="card profile-card" style="margin-top:16px;">
+          <div class="form-label" style="margin-bottom:8px;">API Ayarları</div>
+          <p style="font-size:12px; color: var(--text-muted); margin-bottom:14px; line-height:1.6;">Client ID veya Gemini API Key'i yanlış girdiysen ya da değiştirmek istersen buradan sıfırlayabilirsin. Bu işlem seni tekrar kurulum ekranına yönlendirir, Drive'daki sorular ve arşivin etkilenmez.</p>
+          <button class="btn btn-secondary" onclick="resetApiKeys()" style="color: var(--amber);"><i class="ti ti-key"></i> API Ayarlarını Sıfırla</button>
+        </div>
+
+        <div class="card profile-card" style="margin-top:16px;">
+          <div class="form-label" style="margin-bottom:8px;">Gemini Modeli</div>
+          <p style="font-size:12px; color: var(--text-muted); margin-bottom:14px; line-height:1.6;">Google zaman zaman yeni Gemini modelleri çıkarır veya eski modelleri kaldırır. Bir model artık çalışmıyorsa (örn. "model bulunamadı" hatası alıyorsan), kodu değiştirmene gerek yok — güncel model adını buraya yazman yeterli.</p>
+          <div class="form-group">
+            <input type="text" class="form-input" id="profileGeminiModel" placeholder="gemini-2.5-flash">
+            <div class="form-hint">Geçerli model adlarını <a href="https://ai.google.dev/gemini-api/docs/models" target="_blank" rel="noopener" style="color:var(--primary);">Google'ın model listesinden</a> kontrol edebilirsin. Boş bırakırsan varsayılan (<code id="defaultModelHint" style="font-size:10.5px; background:var(--bg); padding:1px 4px; border-radius:4px;"></code>) kullanılır.</div>
+          </div>
+          <button class="btn btn-secondary" onclick="saveGeminiModel()"><i class="ti ti-check"></i> Model Ayarını Kaydet</button>
+        </div>
+
+        <div class="card profile-card" style="margin-top:16px;">
+          <div class="form-label" style="margin-bottom:8px;">Yapay Zeka Asistanı Konumu</div>
+          <p style="font-size:12px; color: var(--text-muted); margin-bottom:14px; line-height:1.6;">Sohbet butonunun ekranda hangi köşede durmasını istediğini seç. Panel içinden ↔ butonu ile de anlık değiştirebilirsin.</p>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" id="chatPosRightBtn" onclick="setChatPosition('right')">
+              <i class="ti ti-layout-sidebar-right"></i> Sağ Köşe
+            </button>
+            <button class="btn btn-secondary" id="chatPosLeftBtn" onclick="setChatPosition('left')">
+              <i class="ti ti-layout-sidebar-left"></i> Sol Köşe
+            </button>
+          </div>
+        </div>
       </div>
 
     </main>
@@ -622,8 +948,13 @@
 // ════════════════════════════════════════════════════
 const OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile';
 const DRIVE_API = 'https://www.googleapis.com/drive/v3';
-const GEMINI_API = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'; // Google modeli değiştirirse/kaldırırsa burayı güncelle — kullanıcılar Ayarlar'dan da değiştirebilir
 const REDIRECT_URI = location.origin + location.pathname;
+
+function geminiApiUrl() {
+  const model = STATE.geminiModel || DEFAULT_GEMINI_MODEL;
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+}
 
 // ════════════════════════════════════════════════════
 // ── STATE
@@ -631,6 +962,7 @@ const REDIRECT_URI = location.origin + location.pathname;
 let STATE = {
   clientId: '',
   geminiKey: '',
+  geminiModel: '',
   accessToken: '',
   refreshToken: '',
   tokenExpiry: 0,
@@ -709,6 +1041,15 @@ async function generatePKCE() {
 }
 
 async function startOAuth() {
+  if (location.protocol === 'file:') {
+    showSetupError('setup-auth-error', 'Bu dosya doğrudan çift tıklanarak (file://) açılmış. Google girişi bu şekilde çalışmaz. Dosyayı bir web sunucusundan (ör. GitHub Pages, Netlify) veya "localhost" üzerinden açman gerekiyor — Client ID\'ye eklediğin yönlendirme adresiyle aynı adresten erişmelisin.');
+    return;
+  }
+  if (!STATE.clientId) {
+    showSetupError('setup-auth-error', 'Client ID bulunamadı, lütfen önceki adıma dönüp tekrar gir.');
+    return;
+  }
+  showSetupError('setup-auth-error', '');
   const { verifier, challenge } = await generatePKCE();
   sessionStorage.setItem('pkce_verifier', verifier);
   const params = new URLSearchParams({
@@ -726,17 +1067,37 @@ async function startOAuth() {
 
 async function handleOAuthCallback() {
   const params = new URLSearchParams(location.search);
+
+  // Google bir hata ile geri dönmüş olabilir (örn. redirect_uri_mismatch, access_denied)
+  const oauthError = params.get('error');
+  if (oauthError) {
+    history.replaceState({}, '', location.pathname);
+    const errMap = {
+      redirect_uri_mismatch: 'Yönlendirme adresi uyuşmuyor. Google Cloud Console\'daki Client ID ayarlarında "Yetkili yönlendirme URI\'leri" alanına aşağıdaki adresi birebir aynı şekilde eklediğinden emin ol.',
+      access_denied: 'Giriş izni verilmedi. Tekrar deneyip Google hesabı seçim ekranında izinleri onaylaman gerekiyor.',
+      invalid_client: 'Client ID geçersiz görünüyor. Bir önceki adıma dönüp doğru değeri tekrar girmeni öneririm.',
+    };
+    showSetupError('setup-auth-error',
+      (errMap[oauthError] || ('Google giriş hatası: ' + oauthError)) +
+      '<br><br>Yönlendirme adresin: <code style="font-size:10.5px; background:var(--bg); padding:1px 4px; border-radius:4px; word-break:break-all;">' + REDIRECT_URI + '</code>');
+    return false;
+  }
+
   const code = params.get('code');
   if (!code) return false;
   history.replaceState({}, '', location.pathname);
   const verifier = sessionStorage.getItem('pkce_verifier');
-  if (!verifier) { showToast('PKCE doğrulaması başarısız.', 'error'); return false; }
+  if (!verifier) {
+    showSetupError('setup-auth-error', 'Oturum doğrulaması (PKCE) bulunamadı. Bu genelde sayfanın farklı bir sekmede yeniden açılmasından kaynaklanır — lütfen "Google ile Giriş Yap" butonuna tekrar bas.');
+    return false;
+  }
   try {
     const res = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         client_id: STATE.clientId,
+        client_secret: STATE.clientSecret,
         code_verifier: verifier,
         code,
         grant_type: 'authorization_code',
@@ -752,7 +1113,7 @@ async function handleOAuthCallback() {
     sessionStorage.removeItem('pkce_verifier');
     return true;
   } catch (e) {
-    showToast('Giriş başarısız: ' + e.message, 'error');
+    showSetupError('setup-auth-error', 'Token alınamadı: ' + e.message + '. Client ID\'nin doğru ve "Yetkili yönlendirme URI\'leri" listesinde bu adresin olduğundan emin ol: <code style="font-size:10.5px; background:var(--bg); padding:1px 4px; border-radius:4px; word-break:break-all;">' + REDIRECT_URI + '</code>');
     return false;
   }
 }
@@ -778,6 +1139,7 @@ async function ensureToken() {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         client_id: STATE.clientId,
+        client_secret: STATE.clientSecret,
         refresh_token: STATE.refreshToken,
         grant_type: 'refresh_token',
       })
@@ -803,6 +1165,17 @@ function logout() {
   location.reload();
 }
 
+function resetApiKeys() {
+  if (!confirm('Client ID ve Gemini API Key sıfırlanacak, tekrar giriş yapman gerekecek. Drive\'daki sorular ve arşivin silinmeyecek. Devam edilsin mi?')) return;
+  localStorage.removeItem('sa_client_id');
+  localStorage.removeItem('sa_client_secret');
+  localStorage.removeItem('sa_gemini_key');
+  localStorage.removeItem('sa_access_token');
+  localStorage.removeItem('sa_refresh_token');
+  localStorage.removeItem('sa_token_expiry');
+  location.reload();
+}
+
 // ════════════════════════════════════════════════════
 // ── DRIVE API
 // ════════════════════════════════════════════════════
@@ -813,20 +1186,25 @@ async function driveReq(path, opts={}) {
     headers: { Authorization: `Bearer ${STATE.accessToken}`, ...(opts.headers || {}) }
   });
   if (res.status === 429) throw new Error('QUOTA_EXCEEDED');
-  if (!res.ok) throw new Error(`Drive API ${res.status}`);
+  if (!res.ok) {
+    let detail = '';
+    try { const errJson = await res.json(); detail = errJson?.error?.message ? ' — ' + errJson.error.message : ''; } catch {}
+    throw new Error(`Drive API ${res.status}${detail}`);
+  }
   if (res.status === 204) return null;
   return res.json();
 }
 
 async function driveListFiles(parentId, mimeType) {
-  let q = `'${parentId}' in parents and trashed=false`;
+  const parent = parentId || 'root';
+  let q = `'${parent}' in parents and trashed=false`;
   if (mimeType) q += ` and mimeType='${mimeType}'`;
   const data = await driveReq(`/files?q=${encodeURIComponent(q)}&fields=files(id,name,modifiedTime)&pageSize=1000`);
   return data.files || [];
 }
 
 async function driveCreateFolder(name, parentId) {
-  const meta = { name, mimeType: 'application/vnd.google-apps.folder', parents: parentId ? [parentId] : [] };
+  const meta = { name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId || 'root'] };
   const data = await driveReq('/files', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -852,7 +1230,7 @@ async function driveUploadJSON(filename, data, parentId, existingId) {
     });
     return existingId;
   }
-  const meta = { name: filename, parents: parentId ? [parentId] : [] };
+  const meta = { name: filename, parents: [parentId || 'root'] };
   const form = new FormData();
   form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
   form.append('file', blob);
@@ -890,8 +1268,143 @@ async function driveReadFile(fileId) {
   return res.json();
 }
 
-function driveImageUrl(fileId) {
-  return `https://drive.google.com/uc?export=view&id=${fileId}`;
+// ════════════════════════════════════════════════════
+// ── IMAGE CACHE (IndexedDB kalıcı + memory hızlı)
+// ════════════════════════════════════════════════════
+// Drive resimleri private: token ile indirip blob URL üretiyoruz.
+// memory cache  : sayfa içi anında erişim (URL.createObjectURL)
+// IndexedDB     : sayfalar arası kalıcı cache (blob olarak)
+// Küçük kartlar : thumbnail (sıkıştırılmış) — detay: full kalite
+
+const _memCache = {}; // fileId → { thumb: blobUrl, full: blobUrl }
+
+async function _idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('SinavAsistaniCache', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('images', { keyPath: 'key' });
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function _idbGet(key) {
+  try {
+    const db = await _idbOpen();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('images', 'readonly');
+      const req = tx.objectStore('images').get(key);
+      req.onsuccess = () => res(req.result?.blob || null);
+      req.onerror = () => res(null);
+    });
+  } catch { return null; }
+}
+async function _idbSet(key, blob) {
+  try {
+    const db = await _idbOpen();
+    return new Promise((res) => {
+      const tx = db.transaction('images', 'readwrite');
+      tx.objectStore('images').put({ key, blob });
+      tx.oncomplete = res;
+      tx.onerror = res;
+    });
+  } catch {}
+}
+async function _idbDelete(key) {
+  try {
+    const db = await _idbOpen();
+    return new Promise(res => {
+      const tx = db.transaction('images', 'readwrite');
+      tx.objectStore('images').delete(key);
+      tx.oncomplete = res; tx.onerror = res;
+    });
+  } catch {}
+}
+
+// Canvas ile thumbnail oluştur (max 400px genişlik, kalite 0.7)
+async function _makeThumb(blob) {
+  return new Promise(res => {
+    const img = new Image();
+    const url = URL.createObjectURL(blob);
+    img.onload = () => {
+      const MAX = 400;
+      const scale = Math.min(1, MAX / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(b => res(b || blob), 'image/jpeg', 0.7);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); res(blob); };
+    img.src = url;
+  });
+}
+
+// Full kalite görsel: Drive → IndexedDB → memory
+async function driveGetImageBlobUrl(fileId, thumb = false) {
+  if (!fileId) return '';
+  const cacheKey = thumb ? `thumb_${fileId}` : `full_${fileId}`;
+  const memType = thumb ? 'thumb' : 'full';
+
+  if (_memCache[fileId]?.[memType]) return _memCache[fileId][memType];
+
+  // IndexedDB'de var mı?
+  const cached = await _idbGet(cacheKey);
+  if (cached) {
+    const url = URL.createObjectURL(cached);
+    if (!_memCache[fileId]) _memCache[fileId] = {};
+    _memCache[fileId][memType] = url;
+    return url;
+  }
+
+  // Drive'dan indir
+  await ensureToken();
+  const res = await fetch(`${DRIVE_API}/files/${fileId}?alt=media`, {
+    headers: { Authorization: `Bearer ${STATE.accessToken}` }
+  });
+  if (!res.ok) throw new Error('Görsel indirilemedi');
+  const fullBlob = await res.blob();
+
+  // Full ve thumb'ı kaydet
+  const thumbBlob = await _makeThumb(fullBlob);
+  _idbSet(`full_${fileId}`, fullBlob);
+  _idbSet(`thumb_${fileId}`, thumbBlob);
+
+  if (!_memCache[fileId]) _memCache[fileId] = {};
+  _memCache[fileId].full = URL.createObjectURL(fullBlob);
+  _memCache[fileId].thumb = URL.createObjectURL(thumbBlob);
+
+  return _memCache[fileId][memType];
+}
+
+// Sayfadaki [data-drive-img] img'leri doldurur. thumb=true → küçük görsel
+async function hydrateDriveImages(root = document, thumb = false) {
+  const imgs = root.querySelectorAll('img[data-drive-img]');
+  const tasks = Array.from(imgs).map(async img => {
+    const fileId = img.getAttribute('data-drive-img');
+    if (!fileId) return;
+    try {
+      const url = await driveGetImageBlobUrl(fileId, thumb);
+      img.src = url;
+    } catch {
+      const icon = document.createElement('i');
+      icon.className = 'ti ti-photo';
+      icon.style.cssText = 'color:var(--text-light);font-size:24px;margin:12px auto;display:block;';
+      img.replaceWith(icon);
+    }
+  });
+  await Promise.all(tasks); // paralel indir
+}
+
+// Drive cache'ini temizle (soru silinince çağrılır)
+async function evictImageCache(fileId) {
+  if (!fileId) return;
+  await _idbDelete(`full_${fileId}`);
+  await _idbDelete(`thumb_${fileId}`);
+  if (_memCache[fileId]) {
+    if (_memCache[fileId].full) URL.revokeObjectURL(_memCache[fileId].full);
+    if (_memCache[fileId].thumb) URL.revokeObjectURL(_memCache[fileId].thumb);
+    delete _memCache[fileId];
+  }
 }
 
 // ════════════════════════════════════════════════════
@@ -899,47 +1412,122 @@ function driveImageUrl(fileId) {
 // ════════════════════════════════════════════════════
 async function geminiAnalyze(imageBase64, mimeType) {
   const { isim, sinavTuru } = STATE.profile;
-  const prompt = `Sen ${sinavTuru} sınavına hazırlanan ${isim} adlı bir öğrencinin soru çözme asistanısın.
-Verilen soru görselini analiz et ve YALNIZCA aşağıdaki JSON formatında yanıt ver.
-Türkçe yaz. JSON dışında hiçbir şey yazma, markdown backtick kullanma.
 
-{"ders":"","konu":"","zorluk":"Kolay|Orta|Zor","cozum":{"gorselGerekli":false,"svg":null,"ozet":"","anaKavram":"","adimlar":[""],"sonuc":"","sikYapilanHata":"","sinavTuyu":"","baglantiKonular":[""]}}
+  // Alanları ayrı ayrı istiyoruz — uzun JSON tek blokta kesilmesin diye
+  const prompt = `Sen ${sinavTuru} sınavına hazırlanan ${isim} adlı öğrencinin soru çözme asistanısın.
+Görseldeki soruyu analiz et. YALNIZCA aşağıdaki JSON yapısını döndür, başka hiçbir şey yazma, markdown kullanma.
 
-gorselGerekli: geometri/grafik/devre için true, svg üret; değilse false, svg null.
-anaKavram: formül veya teorem.
-adimlar: her adım ayrı string, LaTeX kullanma, düz metin.`;
+{
+  "ders": "dersin adı",
+  "konu": "konunun adı",
+  "zorluk": "Kolay",
+  "cozum": {
+    "gorselGerekli": false,
+    "svg": null,
+    "ozet": "tek cümle özet",
+    "anaKavram": "kullanılan formül veya kural",
+    "adimlar": ["1. adım", "2. adım"],
+    "sonuc": "sonuç ifadesi",
+    "sikYapilanHata": "sık hata",
+    "sinavTuyu": "sınav ipucu",
+    "baglantiKonular": ["konu1", "konu2"]
+  }
+}
 
-  const body = {
-    contents: [{
-      parts: [
-        { inline_data: { mime_type: mimeType, data: imageBase64 } },
-        { text: prompt }
-      ]
-    }],
-    generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
+Kurallar:
+- zorluk yalnızca: Kolay, Orta veya Zor
+- adimlar kısa ve net, formüller düz metin (LaTeX yok)
+- gorselGerekli sadece geometri/grafik/devre varsa true, svg o zaman dolu
+- Tüm metinler Türkçe`;
+
+  const callGemini = async () => {
+    const body = {
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mimeType, data: imageBase64 } },
+          { text: prompt }
+        ]
+      }],
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 8192,        // yeterince büyük — kesme olmaz
+        responseMimeType: 'application/json' // JSON modu: Gemini JSON üretmeye zorlanır
+      }
+    };
+    const res = await fetch(`${geminiApiUrl()}?key=${STATE.geminiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      let detail = '';
+      try { const e = await res.json(); detail = e?.error?.message ? ' — ' + e.error.message : ''; } catch {}
+      throw new Error(`Gemini ${res.status}${detail}`);
+    }
+    return res.json();
   };
 
-  const res = await fetch(`${GEMINI_API}?key=${STATE.geminiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`Gemini ${res.status}`);
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  const clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
-  return JSON.parse(clean);
+  // İlk deneme
+  let data = await callGemini();
+  let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // finishReason STOP değilse (MAX_TOKENS vb.) bir kez retry
+  const finishReason = data.candidates?.[0]?.finishReason;
+  if (finishReason && finishReason !== 'STOP') {
+    console.warn('Gemini finishReason:', finishReason, '— retrying without responseMimeType');
+    // responseMimeType'sız fallback (bazı modellerde JSON modu farklı davranır)
+    const fallbackBody = {
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mimeType, data: imageBase64 } },
+          { text: prompt }
+        ]
+      }],
+      generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
+    };
+    const res2 = await fetch(`${geminiApiUrl()}?key=${STATE.geminiKey}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fallbackBody)
+    });
+    if (res2.ok) { data = await res2.json(); text = data.candidates?.[0]?.content?.parts?.[0]?.text || ''; }
+  }
+
+  // JSON temizle: fence, BOM, boşluklar
+  const clean = text
+    .replace(/^```json\s*/i, '').replace(/```\s*$/,'')
+    .replace(/^﻿/, '').trim();
+
+  try {
+    return JSON.parse(clean);
+  } catch (parseErr) {
+    // Hata ayıklama: ilk 200 karakteri logla
+    console.error('JSON parse hatası. Ham yanıt (ilk 300 kr):', clean.slice(0, 300));
+    throw new Error('Gemini geçersiz JSON döndürdü — lütfen tekrar deneyin. (' + parseErr.message + ')');
+  }
 }
 
 async function geminiChat(userMsg, cozum, imageBase64, mimeType) {
   const { isim, sinavTuru } = STATE.profile;
-  const history = STATE.chatHistory.map(m => `${m.role === 'user' ? isim : 'Asistan'}: ${m.content}`).join('\n');
-  const sysPrompt = `Sen ${sinavTuru} sınavına hazırlanan ${isim} adlı öğrencinin soru asistanısın.
-Daha önce çözülmüş bir soru hakkında öğrenci soru soruyor.
-Daha önce üretilen çözüm: ${JSON.stringify(cozum)}
-Sohbet geçmişi:\n${history}
-Öğrencinin yeni sorusu: ${userMsg}
-Kısa, anlaşılır ve Türkçe yanıt ver. Sadece sorulan yeri açıkla, baştan tekrar etme.`;
+  const history = STATE.chatHistory
+    .slice(-8) // son 8 mesaj yeterli
+    .map(m => `${m.role === 'user' ? isim : 'Asistan'}: ${m.content}`)
+    .join('\n');
+
+  const sysPrompt = `Sen bir soru asistanısın. Öğrencinin adı ${isim}${sinavTuru ? ', ' + sinavTuru + ' sınavına hazırlanıyor' : ''}.
+
+Çözülen soru bilgisi: ${JSON.stringify(cozum)}
+
+Önceki mesajlar:
+${history}
+
+${isim} şunu soruyor: ${userMsg}
+
+Kurallar:
+- Türkçe yaz
+- Doğal ve samimi bir dil kullan, resmi olma
+- Soruyu tam olarak yanıtla, cümleleri yarıda kesme
+- Sadece sorulan şeyi açıkla
+- Gereksiz giriş/kapanış cümleleri ekleme
+- Yanıt için yeterli uzunluğu kullan, ne çok kısa ne gereksiz uzun`;
 
   const parts = [];
   if (imageBase64) parts.push({ inline_data: { mime_type: mimeType, data: imageBase64 } });
@@ -947,12 +1535,16 @@ Kısa, anlaşılır ve Türkçe yanıt ver. Sadece sorulan yeri açıkla, başta
 
   const body = {
     contents: [{ parts }],
-    generationConfig: { temperature: 0.4, maxOutputTokens: 1024 }
+    generationConfig: { temperature: 0.5, maxOutputTokens: 2048 }
   };
-  const res = await fetch(`${GEMINI_API}?key=${STATE.geminiKey}`, {
+  const res = await fetch(`${geminiApiUrl()}?key=${STATE.geminiKey}`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error(`Gemini ${res.status}`);
+  if (!res.ok) {
+    let detail = '';
+    try { const e = await res.json(); detail = e?.error?.message ? ' — ' + e.error.message : ''; } catch {}
+    throw new Error(`Gemini ${res.status}${detail}`);
+  }
   const data = await res.json();
   return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Yanıt alınamadı.';
 }
@@ -960,16 +1552,67 @@ Kısa, anlaşılır ve Türkçe yanıt ver. Sadece sorulan yeri açıkla, başta
 // ════════════════════════════════════════════════════
 // ── SETUP
 // ════════════════════════════════════════════════════
+function showSetupError(stepId, msg) {
+  const el = document.getElementById(stepId);
+  if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+  el.style.display = 'block';
+  el.innerHTML = msg;
+}
+
 function saveSetup() {
+  showSetupError('setup-keys-error', '');
   const cid = document.getElementById('setupClientId').value.trim();
+  const csecret = document.getElementById('setupClientSecret').value.trim();
   const gkey = document.getElementById('setupGeminiKey').value.trim();
-  if (!cid || !gkey) { showToast('Lütfen tüm alanları doldurun.', 'error'); return; }
+
+  if (!cid || !csecret || !gkey) {
+    showSetupError('setup-keys-error', 'Lütfen tüm alanları doldurun.');
+    return;
+  }
+  // Basit format doğrulaması — yaygın yanlış girişleri burada yakala
+  if (!/\.apps\.googleusercontent\.com$/.test(cid)) {
+    showSetupError('setup-keys-error', 'Client ID ".apps.googleusercontent.com" ile bitmeli. Google Cloud Console → Kimlik Bilgileri sayfasından "OAuth 2.0 İstemci Kimlikleri" altındaki değeri kopyaladığından emin ol.');
+    return;
+  }
+  if (/\s/.test(csecret)) {
+    showSetupError('setup-keys-error', 'Client Secret içinde boşluk var gibi görünüyor, tekrar kopyala-yapıştır yapmayı dene.');
+    return;
+  }
+  // Not: Gemini key formatı zamanla değişebilir, bu yüzden sadece çok temel bir uzunluk
+  // kontrolü yapıyoruz; gerçek doğrulama ilk API çağrısında ortaya çıkar.
+  if (gkey.length < 15 || /\s/.test(gkey)) {
+    showSetupError('setup-keys-error', 'Gemini API Key çok kısa görünüyor veya içinde boşluk var. AI Studio sayfasından anahtarı tekrar kopyalayıp yapıştırmayı dene (anahtarın başında/sonunda yanlışlıkla boşluk kalmadığından emin ol).');
+    return;
+  }
+
   localStorage.setItem('sa_client_id', cid);
+  localStorage.setItem('sa_client_secret', csecret);
   localStorage.setItem('sa_gemini_key', gkey);
   STATE.clientId = cid;
+  STATE.clientSecret = csecret;
   STATE.geminiKey = gkey;
+  showSetupError('setup-auth-error', '');
   document.getElementById('setup-step-keys').style.display = 'none';
   document.getElementById('setup-step-auth').style.display = 'block';
+}
+
+function backToKeysStep() {
+  // Adım 2'den adım 1'e dön; mevcut değerleri input'lara geri doldur ki kullanıcı sıfırdan yazmasın
+  document.getElementById('setupClientId').value = STATE.clientId || '';
+  document.getElementById('setupClientSecret').value = STATE.clientSecret || '';
+  document.getElementById('setupGeminiKey').value = STATE.geminiKey || '';
+  showSetupError('setup-auth-error', '');
+  document.getElementById('setup-step-auth').style.display = 'none';
+  document.getElementById('setup-step-keys').style.display = 'block';
+}
+
+function copyRedirectUri(el) {
+  navigator.clipboard.writeText(REDIRECT_URI).then(() => {
+    if (el) { const orig = el.innerHTML; el.innerHTML = '<i class="ti ti-check"></i> Kopyalandı!'; setTimeout(() => el.innerHTML = orig, 2000); }
+    else showToast('Yönlendirme adresi kopyalandı.', 'success');
+  }).catch(() => {
+    showToast('Kopyalanamadı: ' + REDIRECT_URI, 'error');
+  });
 }
 
 async function createProfile() {
@@ -998,33 +1641,52 @@ async function createProfile() {
 // ── DRIVE STRUCTURE INIT
 // ════════════════════════════════════════════════════
 async function initDriveStructure() {
-  STATE.rootFolderId = await driveGetOrCreateFolder('SinavAsistani', null);
+  try {
+    STATE.rootFolderId = await driveGetOrCreateFolder('SinavAsistani', null);
+  } catch (e) {
+    // Önceki başarısız denemelerden kalma geçersiz bir ID localStorage'da kalmış olabilir.
+    // Temizleyip kökten (root) tekrar dene.
+    localStorage.removeItem('sa_root_folder');
+    localStorage.removeItem('sa_sorular_folder');
+    localStorage.removeItem('sa_profile_file_id');
+    localStorage.removeItem('sa_analitik_file_id');
+    STATE.rootFolderId = await driveGetOrCreateFolder('SinavAsistani', null);
+  }
   localStorage.setItem('sa_root_folder', STATE.rootFolderId);
   STATE.sorularFolderId = await driveGetOrCreateFolder('sorular', STATE.rootFolderId);
   localStorage.setItem('sa_sorular_folder', STATE.sorularFolderId);
+}
+
+// Her soru dosyasını paralel indir (Promise.all ile)
+async function loadQuestionsFromFolder(dersFolder, konuFolder) {
+  const files = await driveListFiles(konuFolder.id, 'application/json');
+  const tasks = files.map(async f => {
+    try {
+      const q = await driveReadFile(f.id);
+      if (q && q.id) {
+        q.fileId = f.id;
+        q.dersFolderId = dersFolder.id;
+        q.konuFolderId = konuFolder.id;
+        return q;
+      }
+    } catch {}
+    return null;
+  });
+  return (await Promise.all(tasks)).filter(Boolean);
 }
 
 async function loadAllQuestions() {
   STATE.questions = [];
   try {
     const dersKlasors = await driveListFiles(STATE.sorularFolderId, 'application/vnd.google-apps.folder');
-    for (const dersFolder of dersKlasors) {
+    // Tüm konu klasörlerini paralel tara
+    const konuTasks = dersKlasors.map(async dersFolder => {
       const konuKlasors = await driveListFiles(dersFolder.id, 'application/vnd.google-apps.folder');
-      for (const konuFolder of konuKlasors) {
-        const files = await driveListFiles(konuFolder.id, 'application/json');
-        for (const f of files) {
-          try {
-            const q = await driveReadFile(f.id);
-            if (q && q.id) {
-              q.fileId = f.id;
-              q.dersFolderId = dersFolder.id;
-              q.konuFolderId = konuFolder.id;
-              STATE.questions.push(q);
-            }
-          } catch {}
-        }
-      }
-    }
+      const qTasks = konuKlasors.map(k => loadQuestionsFromFolder(dersFolder, k));
+      return (await Promise.all(qTasks)).flat();
+    });
+    const all = (await Promise.all(konuTasks)).flat();
+    STATE.questions = all.sort((a, b) => b.tarih.localeCompare(a.tarih)); // yeniden eskiye
   } catch (e) {
     console.error('Sorular yüklenemedi:', e);
   }
@@ -1049,12 +1711,17 @@ function rebuildAnalitik() {
   STATE.analitik = a;
 }
 
-async function saveAnalitik() {
+let _analitikSaveTimer = null;
+function saveAnalitik() {
   rebuildAnalitik();
-  try {
-    STATE.analitikFileId = await driveUploadJSON('analitik.json', STATE.analitik, STATE.rootFolderId, STATE.analitikFileId);
-    localStorage.setItem('sa_analitik_file_id', STATE.analitikFileId);
-  } catch (e) { console.error('Analitik kaydedilemedi:', e); }
+  // Debounce: 1.5 saniye içinde birden fazla çağrı olursa tek bir Drive yazması yap
+  clearTimeout(_analitikSaveTimer);
+  _analitikSaveTimer = setTimeout(async () => {
+    try {
+      STATE.analitikFileId = await driveUploadJSON('analitik.json', STATE.analitik, STATE.rootFolderId, STATE.analitikFileId);
+      localStorage.setItem('sa_analitik_file_id', STATE.analitikFileId);
+    } catch (e) { console.error('Analitik kaydedilemedi:', e); }
+  }, 1500);
 }
 
 // ════════════════════════════════════════════════════
@@ -1068,17 +1735,25 @@ function showScreen(id) {
 
 function navigate(page) {
   STATE.currentPage = page;
-  // Show/hide pages within the app screen
   document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
   const pg = document.getElementById(`page-${page}`);
   if (pg) pg.style.display = 'block';
 
-  // Update nav active states
   document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(n => {
     n.classList.toggle('active', n.dataset.screen === page);
   });
 
-  // Load page data
+  // FAB yönetimi
+  if (page === 'analiz') {
+    showChatFab('Eğitim Koçun');
+    // Analiz sayfasına geçince soru modunu sıfırla
+    if (chatbotMode === 'soru') { closeChatbot(); chatbotMode = null; }
+  } else if (page === 'detay') {
+    // openQuestion zaten showChatFab çağırır
+  } else {
+    hideChatFab();
+  }
+
   if (page === 'dashboard') renderDashboard();
   if (page === 'arsiv') renderArchive();
   if (page === 'analiz') renderAnaliz();
@@ -1089,7 +1764,11 @@ function navigate(page) {
 function showApp() {
   showScreen('screen-app');
   updateSidebar();
+  _applyChatPos(getChatPosition());
   navigate('dashboard');
+  if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    document.querySelectorAll('.camera-btn').forEach(b => b.style.display = 'inline-flex');
+  }
 }
 
 function updateSidebar() {
@@ -1159,7 +1838,7 @@ function renderRemindList() {
   container.innerHTML = remind.map(q => `
     <div class="remind-card" onclick="openQuestion('${q.id}')">
       <div class="remind-thumb">
-        ${q.resimDriveId ? `<img src="${driveImageUrl(q.resimDriveId)}" alt="" onerror="this.parentElement.innerHTML='<i class=\\'ti ti-photo\\' style=\\'color:var(--text-light);font-size:24px;margin:12px auto;display:block;\\'></i>'">` : '<i class="ti ti-photo" style="color:var(--text-light);font-size:24px;margin:12px auto;display:block;"></i>'}
+        ${q.resimDriveId ? `<img data-drive-img="${q.resimDriveId}" alt="">` : '<i class="ti ti-photo" style="color:var(--text-light);font-size:24px;margin:12px auto;display:block;"></i>'}
       </div>
       <div class="remind-info">
         <div class="remind-topic">${q.konu}</div>
@@ -1168,6 +1847,7 @@ function renderRemindList() {
       <i class="ti ti-chevron-right" style="color: var(--text-light);"></i>
     </div>
   `).join('');
+  hydrateDriveImages(container, true); // thumb - küçük kartlar
 }
 
 // ════════════════════════════════════════════════════
@@ -1177,8 +1857,10 @@ let uploadFile = null;
 
 function resetUpload() {
   uploadFile = null;
-  document.getElementById('uploadArea').style.display = 'flex';
+  document.getElementById('uploadArea').style.display = 'block';
   document.getElementById('uploadArea').className = 'upload-area';
+  const btnRow = document.getElementById('uploadBtnRow');
+  if (btnRow) btnRow.style.display = 'flex';
   document.getElementById('uploadProgress').style.display = 'none';
   document.getElementById('uploadPreview').style.display = 'none';
   ['step1','step2','step3'].forEach(id => {
@@ -1227,6 +1909,8 @@ function setStep(id, state, statusText='') {
 
 async function startUpload(file) {
   document.getElementById('uploadArea').style.display = 'none';
+  const btnRow = document.getElementById('uploadBtnRow');
+  if (btnRow) btnRow.style.display = 'none';
   document.getElementById('uploadProgress').style.display = 'block';
 
   try {
@@ -1377,7 +2061,7 @@ function renderQuestionGrid(questions) {
     <div class="question-card" onclick="openQuestion('${q.id}')">
       <div class="question-thumb">
         ${q.resimDriveId
-          ? `<img src="${driveImageUrl(q.resimDriveId)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'no-img\\'><i class=\\'ti ti-photo\\'></i></div>'">`
+          ? `<img data-drive-img="${q.resimDriveId}" alt="" loading="lazy">`
           : '<div class="no-img"><i class="ti ti-photo"></i></div>'}
       </div>
       <div class="question-body">
@@ -1394,6 +2078,7 @@ function renderQuestionGrid(questions) {
       </div>
     </div>
   `).join('');
+  hydrateDriveImages(grid, true); // thumb - küçük kartlar
 }
 
 // ════════════════════════════════════════════════════
@@ -1405,13 +2090,21 @@ async function openQuestion(id) {
   STATE.currentQuestion = q;
   STATE.chatHistory = [];
 
-  // Increment view count
+  // Chatbot sıfırla
+  chatbotMode = null;
+  chatbotImageBase64 = null;
+  chatbotImageMime = null;
+  closeChatbot();
+
   q.goruntulemeSayisi = (q.goruntulemeSayisi || 0) + 1;
   q.sonGoruntuleme = now();
   saveQuestionToFile(q);
 
   navigate('detay');
   renderDetail(q);
+
+  // Soru detayında FAB göster
+  showChatFab('Soru Sor');
 }
 
 async function saveQuestionToFile(q) {
@@ -1433,10 +2126,9 @@ function renderDetail(q) {
   `;
 
   // Main content
-  const imgSrc = q.resimDriveId ? driveImageUrl(q.resimDriveId) : '';
   document.getElementById('detayContent').innerHTML = `
     <div>
-      ${imgSrc ? `<img src="${imgSrc}" alt="Soru" onclick="openLightbox('${imgSrc}')" style="width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:zoom-in;">` : '<div style="padding:40px;text-align:center;color:var(--text-light);border:1px dashed var(--border);border-radius:var(--radius);"><i class="ti ti-photo" style="font-size:40px;"></i><br>Görsel bulunamadı</div>'}
+      ${q.resimDriveId ? `<img id="detayMainImg" data-drive-img="${q.resimDriveId}" alt="Soru" style="width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:zoom-in;">` : '<div style="padding:40px;text-align:center;color:var(--text-light);border:1px dashed var(--border);border-radius:var(--radius);"><i class="ti ti-photo" style="font-size:40px;"></i><br>Görsel bulunamadı</div>'}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
         <span class="badge badge-blue"><i class="ti ti-book"></i> ${q.ders}</span>
         <span class="badge badge-gray">${q.konu}</span>
@@ -1516,16 +2208,27 @@ function renderDetail(q) {
     <button class="btn btn-amber" onclick="setDevam()" ${!isLearned ? 'disabled' : ''} id="btnDevam">
       <i class="ti ti-refresh"></i> Devam Ediyorum
     </button>
-    <button class="btn btn-secondary" onclick="openChat()">
-      <i class="ti ti-message-circle"></i> Soru Sor
+    <button class="btn btn-secondary" onclick="incrementTekrar()" id="btnTekrar">
+      <i class="ti ti-repeat"></i> Tekrar Ettim
+      <span style="font-size:11px; background:rgba(0,0,0,0.08); border-radius:10px; padding:1px 6px; margin-left:2px;" id="repeatCount">${q.tekrarSayisi||0}</span>
+    </button>
+    <button class="btn btn-secondary" onclick="openEditModal()">
+      <i class="ti ti-edit"></i> Düzenle
+    </button>
+    <button class="btn btn-secondary" onclick="openDeleteModal()" style="color:var(--red); border-color:#FCA5A5;">
+      <i class="ti ti-trash"></i> Soruyu Sil
     </button>
     <div class="action-spacer"></div>
     <div class="counters">
       <span class="counter-item"><i class="ti ti-eye"></i> <span id="viewCount">${q.goruntulemeSayisi}</span></span>
-      <span class="counter-item"><i class="ti ti-refresh"></i> <span id="repeatCount">${q.tekrarSayisi}</span></span>
     </div>
-    <button class="btn btn-secondary btn-sm" onclick="incrementTekrar()"><i class="ti ti-refresh"></i> Tekrar Ettim</button>
   `;
+
+  // Drive görselini yükle (token ile) ve lightbox'a bağla
+  hydrateDriveImages(document.getElementById('detayContent'), false).then(() => { // full kalite
+    const mainImg = document.getElementById('detayMainImg');
+    if (mainImg) mainImg.onclick = () => openLightbox(mainImg.src);
+  });
 }
 
 async function toggleLearned() {
@@ -1558,69 +2261,335 @@ async function incrementTekrar() {
 }
 
 // ════════════════════════════════════════════════════
-// ── CHAT
+// ── EDIT MODAL
 // ════════════════════════════════════════════════════
-let chatImageBase64 = null;
-let chatImageMime = null;
-
-function openChat() {
+function openEditModal() {
   const q = STATE.currentQuestion;
-  document.getElementById('chatSummary').textContent = `📌 ${q.ders} — ${q.konu}: ${q.cozum.ozet}`;
-  document.getElementById('chatMessages').innerHTML = '<div class="chat-bubble ai">Merhaba! Bu soru hakkında aklına takılan bir şey mi var? Sormaktan çekinme. 😊</div>';
-  document.getElementById('chatOverlay').style.display = 'block';
-  document.getElementById('chatPanel').classList.add('open');
+  document.getElementById('editDers').value = q.ders;
+  document.getElementById('editKonu').value = q.konu;
+  document.getElementById('editZorluk').value = q.zorluk;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+async function saveEditModal() {
+  const q = STATE.currentQuestion;
+  const newDers = document.getElementById('editDers').value.trim();
+  const newKonu = document.getElementById('editKonu').value.trim();
+  const newZorluk = document.getElementById('editZorluk').value;
+  if (!newDers || !newKonu) { showToast('Ders ve konu boş bırakılamaz.', 'error'); return; }
 
-  // Preload image for chat
-  if (q.resimDriveId) {
-    fetch(driveImageUrl(q.resimDriveId))
-      .then(r => r.blob())
-      .then(blob => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          chatImageBase64 = e.target.result.split(',')[1];
-          chatImageMime = blob.type;
-        };
-        reader.readAsDataURL(blob);
-      }).catch(() => {});
+  const dersChanged = newDers !== q.ders;
+  const konuChanged = newKonu !== q.konu || dersChanged;
+
+  q.ders = newDers;
+  q.konu = newKonu;
+  q.zorluk = newZorluk;
+
+  // Klasör yapısını güncelle (ders/konu değiştiyse)
+  if (konuChanged) {
+    try {
+      const newDersFolderId = await driveGetOrCreateFolder(newDers, STATE.sorularFolderId);
+      const newKonuFolderId = await driveGetOrCreateFolder(newKonu, newDersFolderId);
+      // JSON dosyasını yeni klasöre taşı
+      await ensureToken();
+      await fetch(`${DRIVE_API}/files/${q.fileId}?addParents=${newKonuFolderId}&removeParents=${q.konuFolderId}&fields=id`, {
+        method: 'PATCH', headers: { Authorization: `Bearer ${STATE.accessToken}` }
+      });
+      // Görseli de taşı
+      if (q.resimDriveId) {
+        await fetch(`${DRIVE_API}/files/${q.resimDriveId}?addParents=${newKonuFolderId}&removeParents=${q.konuFolderId}&fields=id`, {
+          method: 'PATCH', headers: { Authorization: `Bearer ${STATE.accessToken}` }
+        });
+      }
+      q.dersFolderId = newDersFolderId;
+      q.konuFolderId = newKonuFolderId;
+    } catch (e) { showToast('Klasör taşıma başarısız: ' + e.message, 'error'); }
+  }
+
+  await saveQuestionToFile(q);
+  await saveAnalitik();
+  closeEditModal();
+  renderDetail(q); // breadcrumb ve badge'leri güncelle
+  renderArchive(); // klasör ağacını yenile
+  showToast('Güncellendi ✓', 'success');
+}
+
+// ════════════════════════════════════════════════════
+// ── DELETE
+// ════════════════════════════════════════════════════
+function openDeleteModal() {
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+}
+async function confirmDelete() {
+  const q = STATE.currentQuestion;
+  closeDeleteModal();
+  showLoader(true);
+  try {
+    // Drive'dan JSON sil
+    await ensureToken();
+    if (q.fileId) {
+      await fetch(`${DRIVE_API}/files/${q.fileId}`, {
+        method: 'DELETE', headers: { Authorization: `Bearer ${STATE.accessToken}` }
+      });
+    }
+    // Drive'dan görseli sil
+    if (q.resimDriveId) {
+      await fetch(`${DRIVE_API}/files/${q.resimDriveId}`, {
+        method: 'DELETE', headers: { Authorization: `Bearer ${STATE.accessToken}` }
+      });
+      await evictImageCache(q.resimDriveId);
+    }
+    // State'den çıkar
+    STATE.questions = STATE.questions.filter(x => x.id !== q.id);
+    STATE.currentQuestion = null;
+    await saveAnalitik();
+    showLoader(false);
+    showToast('Soru silindi.', 'success');
+    navigate('arsiv');
+  } catch (e) {
+    showLoader(false);
+    showToast('Silme başarısız: ' + e.message, 'error');
   }
 }
 
-function closeChat() {
-  document.getElementById('chatPanel').classList.remove('open');
-  document.getElementById('chatOverlay').style.display = 'none';
+// ════════════════════════════════════════════════════
+// ── CHAT
+// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
+// ── FLOATING CHATBOT
+// ════════════════════════════════════════════════════
+let chatbotMode = null;       // 'soru' | 'analiz'
+let chatbotImageBase64 = null;
+let chatbotImageMime = null;
+
+// Pozisyon
+function getChatPosition() { return localStorage.getItem('sa_chat_pos') || 'right'; }
+function setChatPosition(side) {
+  localStorage.setItem('sa_chat_pos', side);
+  _applyChatPos(side);
+  const r = document.getElementById('chatPosRightBtn');
+  const l = document.getElementById('chatPosLeftBtn');
+  if (r) r.style.fontWeight = side === 'right' ? '700' : '';
+  if (l) l.style.fontWeight = side === 'left' ? '700' : '';
+}
+function _applyChatPos(side) {
+  const fab = document.getElementById('chatFab');
+  const panel = document.getElementById('chatbotPanel');
+  if (!fab || !panel) return;
+  fab.classList.toggle('pos-left', side === 'left');
+  panel.classList.toggle('pos-left', side === 'left');
+}
+function switchChatSide() {
+  setChatPosition(getChatPosition() === 'right' ? 'left' : 'right');
 }
 
-function chatKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+// FAB göster/gizle
+function showChatFab(label) {
+  const fab = document.getElementById('chatFab');
+  const lbl = document.getElementById('chatFabLabel');
+  if (!fab) return;
+  fab.style.display = 'flex';
+  if (lbl) lbl.textContent = label || 'Asistan';
+  _applyChatPos(getChatPosition());
+}
+function hideChatFab() {
+  const fab = document.getElementById('chatFab');
+  if (fab) fab.style.display = 'none';
+  closeChatbot();
 }
 
-async function sendChatMessage() {
-  const input = document.getElementById('chatInput');
+// Panel aç/kapat
+function toggleChatbot() {
+  const panel = document.getElementById('chatbotPanel');
+  if (!panel) return;
+  if (panel.classList.contains('open')) { closeChatbot(); return; }
+  if (STATE.currentPage === 'analiz' && chatbotMode !== 'analiz') { openAnalizChat(); return; }
+  if (STATE.currentPage === 'detay' && chatbotMode !== 'soru') { openSoruChat(); return; }
+  panel.classList.add('open');
+  setTimeout(() => document.getElementById('chatbotInput').focus(), 120);
+}
+function closeChatbot() {
+  const panel = document.getElementById('chatbotPanel');
+  if (panel) panel.classList.remove('open');
+}
+function clearChatbot() {
+  STATE.chatHistory = [];
+  const msgs = document.getElementById('chatbotMessages');
+  if (msgs) msgs.innerHTML = '';
+}
+
+// Soru modu
+function openSoruChat() {
+  const q = STATE.currentQuestion;
+  if (!q) return;
+  chatbotMode = 'soru';
+  STATE.chatHistory = [];
+  chatbotImageBase64 = null; chatbotImageMime = null;
+
+  const ctxBar = document.getElementById('chatbotContextBar');
+  if (ctxBar) { ctxBar.textContent = `📌 ${q.ders} — ${q.konu}`; ctxBar.style.display = 'block'; }
+  document.getElementById('chatbotHeaderIcon').innerHTML = '<i class="ti ti-message-circle"></i>';
+  document.getElementById('chatbotHeaderTitle').textContent = 'Soru Asistanı';
+  document.getElementById('chatbotHeaderSub').textContent = `${q.ders} — ${q.konu}`;
+
+  const msgs = document.getElementById('chatbotMessages');
+  msgs.innerHTML = `<div class="chatbot-bubble ai">Bu soru hakkında aklında takılan bir şey var mı?</div>`;
+
+  // Sorunun görselini arka planda yükle
+  if (q.resimDriveId) {
+    ensureToken().then(() =>
+      fetch(`${DRIVE_API}/files/${q.resimDriveId}?alt=media`, {
+        headers: { Authorization: `Bearer ${STATE.accessToken}` }
+      })
+    ).then(r => r.blob()).then(blob => {
+      const rd = new FileReader();
+      rd.onload = e => { chatbotImageBase64 = e.target.result.split(',')[1]; chatbotImageMime = blob.type; };
+      rd.readAsDataURL(blob);
+    }).catch(() => {});
+  }
+
+  showChatFab('Soru Sor');
+  document.getElementById('chatbotPanel').classList.add('open');
+  setTimeout(() => document.getElementById('chatbotInput').focus(), 120);
+}
+
+// Analiz modu
+function openAnalizChat() {
+  chatbotMode = 'analiz';
+  STATE.chatHistory = [];
+  chatbotImageBase64 = null; chatbotImageMime = null;
+
+  const ctxBar = document.getElementById('chatbotContextBar');
+  if (ctxBar) { ctxBar.style.display = 'none'; }
+  document.getElementById('chatbotHeaderIcon').innerHTML = '<i class="ti ti-brain"></i>';
+  document.getElementById('chatbotHeaderTitle').textContent = 'Eğitim Koçun';
+  document.getElementById('chatbotHeaderSub').textContent = STATE.profile?.isim || '';
+
+  const a = STATE.analitik;
+  const isim = STATE.profile?.isim || 'Öğrenci';
+  const msgs = document.getElementById('chatbotMessages');
+
+  // Kısa, doğal açılış
+  let acilis = `Merhaba ${isim}! `;
+  if (!a || !a.toplamSoru) {
+    acilis += 'Henüz arşivde soru yok. Nasıl yardımcı olabilirim?';
+  } else {
+    const total = a.toplamSoru;
+    const ogr = Object.values(a.dersler || {}).reduce((s,d) => s+(d.ogrenildi||0), 0);
+    acilis += `${total} soruna baktım, ${ogr} tanesi öğrenildi. Nelerden konuşalım?`;
+  }
+  msgs.innerHTML = `<div class="chatbot-bubble ai">${acilis}</div>`;
+  STATE.chatHistory.push({ role: 'assistant', content: acilis });
+
+  showChatFab('Eğitim Koçun');
+  document.getElementById('chatbotPanel').classList.add('open');
+  setTimeout(() => document.getElementById('chatbotInput').focus(), 120);
+}
+
+// Mesaj gönder
+function chatbotKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatbotMessage(); }
+}
+
+async function sendChatbotMessage() {
+  const input = document.getElementById('chatbotInput');
   const msg = input.value.trim();
   if (!msg) return;
-  input.value = '';
-  const q = STATE.currentQuestion;
+  input.value = ''; input.style.height = 'auto';
 
-  const container = document.getElementById('chatMessages');
-  container.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
+  const msgs = document.getElementById('chatbotMessages');
+  msgs.innerHTML += `<div class="chatbot-bubble user">${escHtml(msg)}</div>`;
   const thinking = document.createElement('div');
-  thinking.className = 'chat-bubble ai thinking';
-  thinking.textContent = 'Düşünüyor...';
-  container.appendChild(thinking);
-  container.scrollTop = container.scrollHeight;
-
+  thinking.className = 'chatbot-bubble ai thinking';
+  thinking.textContent = '...';
+  msgs.appendChild(thinking);
+  msgs.scrollTop = msgs.scrollHeight;
   STATE.chatHistory.push({ role: 'user', content: msg });
 
   try {
-    const reply = await geminiChat(msg, q.cozum, chatImageBase64, chatImageMime);
+    let reply;
+    if (chatbotMode === 'analiz') reply = await geminiAnalizChat(msg);
+    else { const q = STATE.currentQuestion; reply = await geminiChat(msg, q?.cozum, chatbotImageBase64, chatbotImageMime); }
     thinking.remove();
-    container.innerHTML += `<div class="chat-bubble ai">${reply}</div>`;
+    msgs.innerHTML += `<div class="chatbot-bubble ai">${reply.replace(/\n/g,'<br>')}</div>`;
     STATE.chatHistory.push({ role: 'assistant', content: reply });
-  } catch (e) {
+  } catch (err) {
     thinking.remove();
-    container.innerHTML += `<div class="chat-bubble ai thinking">Hata: ${e.message}</div>`;
+    msgs.innerHTML += `<div class="chatbot-bubble ai thinking">Hata: ${err.message}</div>`;
   }
-  container.scrollTop = container.scrollHeight;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Mobil tree toggle
+function toggleMobileTree() {
+  const toggle = document.getElementById('treeMobileToggle');
+  const body = document.getElementById('treeMobileBody');
+  if (!toggle || !body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+async function geminiAnalizChat(userMsg) {
+  const { isim, sinavTuru } = STATE.profile;
+  const a = STATE.analitik;
+  const history = STATE.chatHistory
+    .slice(-10)
+    .map(m => `${m.role === 'user' ? isim : 'Koç'}: ${m.content}`)
+    .join('\n');
+
+  // Özet veri — fazla detay verme, koç bağlamı anlasın yeter
+  const ozet = {
+    toplamSoru: a?.toplamSoru || 0,
+    dersler: Object.entries(a?.dersler || {}).map(([ders, d]) => ({
+      ders,
+      toplam: d.toplam,
+      ogrenildi: d.ogrenildi,
+      devam: d.devam,
+      konular: Object.entries(d.konular || {}).map(([k, v]) => `${k}(${v.ogrenildi||0}/${v.toplam||0})`)
+    })),
+    sonHafta: (a?.oturumGecmisi || []).slice(-7).reduce((s, o) => s + (o.yuklenen || 0), 0)
+  };
+
+  const sysPrompt = `Sen bir sınav koçusun. Öğrencinin adı ${isim}${sinavTuru ? ', ' + sinavTuru + ' hazırlığında' : ''}.
+
+Öğrencinin arşiv istatistikleri:
+${JSON.stringify(ozet, null, 2)}
+
+Önceki mesajlar:
+${history}
+
+${isim}: ${userMsg}
+
+Talimatlar:
+- Doğal, samimi ve profesyonel bir koç gibi konuş
+- Öğrencinin sormadığı konularda ders verme, sorulan şeye odaklan
+- Verileri gerektiğinde kullan ama her cümlede belirtme
+- Öğrencinin tüm sürecini bilmiyorsun, o ne söylerse ona göre yardım et
+- Yanıtı MUTLAKA tamamla, cümleyi yarıda bırakma
+- Türkçe yaz, kısa paragraflar`;
+
+  const body = {
+    contents: [{ parts: [{ text: sysPrompt }] }],
+    generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+  };
+  const res = await fetch(`${geminiApiUrl()}?key=${STATE.geminiKey}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    let detail = '';
+    try { const e = await res.json(); detail = e?.error?.message ? ' — ' + e.error.message : ''; } catch {}
+    throw new Error(`Gemini ${res.status}${detail}`);
+  }
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Yanıt alınamadı.';
 }
 
 // ════════════════════════════════════════════════════
@@ -1640,14 +2609,16 @@ function renderAnaliz() {
 function renderSummaryCards() {
   const a = STATE.analitik;
   const dersler = Object.keys(a.dersler);
-  const enCok = dersler.sort((a1, a2) => (a.dersler[b2]?.toplam||0) - (a.dersler[a1]?.toplam||0))[0] || '—';
-  const enAz = dersler.sort((a1, a2) => (a.dersler[a2]?.devam||0) - (a.dersler[a1]?.devam||0))[0] || '—';
+  const byTotal = [...dersler].sort((x, y) => (a.dersler[y]?.toplam||0) - (a.dersler[x]?.toplam||0));
+  const byDevam = [...dersler].sort((x, y) => (a.dersler[y]?.devam||0) - (a.dersler[x]?.devam||0));
+  const enCok = byTotal[0] || '—';
+  const enAz = byDevam[0] || '—';
   const thisWeek = STATE.questions.filter(q => Date.now() - new Date(q.tarih).getTime() < 7*86400000).length;
   document.getElementById('analysisSummary').innerHTML = `
     <div class="metric-card"><div class="metric-label">Toplam Soru</div><div class="metric-value blue">${a.toplamSoru}</div></div>
     <div class="metric-card"><div class="metric-label">Bu Hafta</div><div class="metric-value">${thisWeek}</div></div>
-    <div class="metric-card"><div class="metric-label">En Çok: ${enCok}</div><div class="metric-value" style="font-size:18px;">${a.dersler[enCok]?.toplam||0} soru</div></div>
-    <div class="metric-card"><div class="metric-label">En Fazla Devam</div><div class="metric-value amber" style="font-size:18px;">${enAz}</div></div>
+    <div class="metric-card"><div class="metric-label">En Çok Çalışılan</div><div class="metric-value" style="font-size:16px;color:var(--primary);">${enCok}</div></div>
+    <div class="metric-card"><div class="metric-label">En Fazla Devam</div><div class="metric-value amber" style="font-size:16px;">${enAz}</div></div>
   `;
 }
 
@@ -1724,6 +2695,22 @@ function renderProfil() {
   if (!STATE.profile) return;
   document.getElementById('profileName').value = STATE.profile.isim;
   document.getElementById('profileSinavTuru').value = STATE.profile.sinavTuru;
+  document.getElementById('profileGeminiModel').value = STATE.geminiModel || '';
+  document.getElementById('defaultModelHint').textContent = DEFAULT_GEMINI_MODEL;
+  // Konum butonlarını aktif olanı vurgula
+  const side = getChatPosition();
+  const r = document.getElementById('chatPosRightBtn');
+  const l = document.getElementById('chatPosLeftBtn');
+  if (r) r.style.fontWeight = side === 'right' ? '700' : '';
+  if (l) l.style.fontWeight = side === 'left' ? '700' : '';
+}
+
+function saveGeminiModel() {
+  const model = document.getElementById('profileGeminiModel').value.trim();
+  STATE.geminiModel = model;
+  if (model) localStorage.setItem('sa_gemini_model', model);
+  else localStorage.removeItem('sa_gemini_model');
+  showToast(model ? `Model "${model}" olarak ayarlandı.` : `Varsayılan model (${DEFAULT_GEMINI_MODEL}) kullanılacak.`, 'success');
 }
 
 async function saveProfile() {
@@ -1748,30 +2735,41 @@ async function saveProfile() {
 async function init() {
   showLoader(true);
 
+  // Redirect URI ipucunu setup ekranına yaz (kullanıcı Google Console'a eklerken kullanacak)
+  document.querySelectorAll('#redirectUriHint').forEach(el => el.textContent = REDIRECT_URI);
+
   // Load config
   STATE.clientId = localStorage.getItem('sa_client_id') || '';
+  STATE.clientSecret = localStorage.getItem('sa_client_secret') || '';
   STATE.geminiKey = localStorage.getItem('sa_gemini_key') || '';
+  STATE.geminiModel = localStorage.getItem('sa_gemini_model') || '';
   STATE.rootFolderId = localStorage.getItem('sa_root_folder') || '';
   STATE.sorularFolderId = localStorage.getItem('sa_sorular_folder') || '';
   STATE.profileFileId = localStorage.getItem('sa_profile_file_id') || '';
   STATE.analitikFileId = localStorage.getItem('sa_analitik_file_id') || '';
 
   // No API keys → setup step 1
-  if (!STATE.clientId || !STATE.geminiKey) {
+  if (!STATE.clientId || !STATE.clientSecret || !STATE.geminiKey) {
     showLoader(false);
     showScreen('screen-setup');
+    document.getElementById('setupClientId').value = STATE.clientId;
+    document.getElementById('setupClientSecret').value = STATE.clientSecret;
+    document.getElementById('setupGeminiKey').value = STATE.geminiKey;
     document.getElementById('setup-step-keys').style.display = 'block';
+    document.getElementById('setup-step-auth').style.display = 'none';
+    document.getElementById('setup-step-profile').style.display = 'none';
     return;
   }
 
-  // Handle OAuth callback
-  if (location.search.includes('code=')) {
+  // Handle OAuth callback (also handles error= from Google)
+  if (location.search.includes('code=') || location.search.includes('error=')) {
     const ok = await handleOAuthCallback();
     if (!ok) {
       showLoader(false);
       showScreen('screen-setup');
       document.getElementById('setup-step-keys').style.display = 'none';
       document.getElementById('setup-step-auth').style.display = 'block';
+      document.getElementById('setup-step-profile').style.display = 'none';
       return;
     }
   }
@@ -1858,6 +2856,13 @@ async function init() {
   showLoader(false);
   showApp();
 }
+
+// Popup dışına tıklayınca kapat
+document.addEventListener('click', e => {
+  if (!e.target.closest('.info-popup-wrap')) {
+    document.querySelectorAll('.info-popup-wrap.active').forEach(el => el.classList.remove('active'));
+  }
+});
 
 // Kick off
 init();
